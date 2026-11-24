@@ -202,8 +202,7 @@
   </div>
 
   <script>
-    // Ganti dengan URL Web App Apps Script yang berakhiran /exec
-    const API_URL = "PASTE_URL_WEB_APP_EXEC_DISINI";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwP_Ydp6FgVtCIrrYGKdnHAGM6vtay3xkQa5eTbuLWjYeG4hj6jmbzoXAJeLO4FWzZg/exec";
     let currentMode = "IDE";
 
     function setMode(mode, btnEl) {
@@ -211,16 +210,6 @@
       document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
       if (btnEl) btnEl.classList.add("active");
       loadData();
-    }
-
-    async function fetchWithTimeout(url, timeoutMs = 15000) {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), timeoutMs);
-      try {
-        return await fetch(url, { signal: controller.signal });
-      } finally {
-        clearTimeout(timer);
-      }
     }
 
     async function loadData() {
@@ -234,22 +223,10 @@
           throw new Error("API_URL belum diisi dengan link Web App (/exec) dari Google Apps Script.");
         }
 
-        const res = await fetchWithTimeout(`${API_URL}?mode=${currentMode}&t=${Date.now()}`);
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status} (${res.statusText})`);
-        }
-
-        const text = await res.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch {
-          throw new Error("Respons bukan JSON valid. Pastikan Deploy Apps Script 'Who has access' diatur ke 'Anyone'.");
-        }
-
-        if (!data.ok) {
-          throw new Error(data.error || "Apps Script mengembalikan status gagal.");
-        }
+        const res = await fetch(`${API_URL}?mode=${currentMode}&t=${Date.now()}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || "Gagal memuat data");
 
         statusEl.textContent = "Terhubung";
         document.getElementById("lastUpdate").textContent = `Pembaruan terakhir : ${data.updatedAt}`;
@@ -259,10 +236,7 @@
         renderGroups(data.groups);
       } catch (err) {
         statusEl.textContent = "Terputus";
-        const msg = err.name === "AbortError"
-          ? "Waktu tunggu habis (15 detik). Periksa koneksi atau coba klik Refresh Sekarang."
-          : err.message;
-        areaEl.innerHTML = `<div class="status-msg" style="color:#b91c1c;"><strong>Gagal mengambil data:</strong><br>${escapeHtml(msg)}</div>`;
+        areaEl.innerHTML = `<div class="status-msg" style="color:#b91c1c;"><strong>Gagal mengambil data:</strong><br>${escapeHtml(err.message)}</div>`;
       }
     }
 
