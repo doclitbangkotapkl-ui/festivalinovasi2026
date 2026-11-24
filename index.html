@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Rekapitulasi Penilaian Festival Inovasi</title>
+  <style>
+    :root {
+      --maroon: #9e1b1b;
+      --maroon-dark: #7d1313;
+      --bg: #f5f6f8;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --row-alt: #fafafa;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Arial, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 16px; }
+    .container { max-width: 1380px; margin: 0 auto; }
+
+    .header {
+      background: linear-gradient(90deg, var(--maroon-dark), var(--maroon));
+      color: #fff;
+      border-radius: 14px;
+      padding: 16px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .header-title { font-size: 20px; font-weight: 700; }
+    .header-sub { font-size: 12px; opacity: 0.9; margin-top: 3px; }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .badge-connected {
+      background: rgba(255,255,255,0.18);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .btn-refresh {
+      background: #fff;
+      color: var(--maroon);
+      border: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-refresh:hover { background: #f3f4f6; }
+
+    .toolbar {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .tabs { display: flex; gap: 8px; }
+    .tab-btn {
+      border: 1px solid #d1d5db;
+      background: #fff;
+      color: var(--text);
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--maroon);
+      color: #fff;
+      border-color: var(--maroon);
+    }
+    .stats { display: flex; gap: 10px; flex-wrap: wrap; }
+    .stat-box {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .stat-box span { font-size: 18px; color: var(--text); }
+
+    .category-section {
+      margin-top: 18px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #f3f4f6;
+    }
+    .category-title { font-size: 15px; font-weight: 700; color: var(--text); }
+    .category-pill {
+      background: #fef2f2;
+      color: var(--maroon);
+      border: 1px solid #fecaca;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .grid-panels {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 1050px) {
+      .grid-panels { grid-template-columns: 1fr; }
+    }
+
+    .panel-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      background: var(--maroon);
+      color: #fff;
+      padding: 9px 10px;
+      text-align: left;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    th.center, td.center { text-align: center; }
+    td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    tr:nth-child(even) td { background: var(--row-alt); }
+
+    .rank-badge {
+      display: inline-flex;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      background: #eef2ff;
+      color: #3730a3;
+    }
+    .rank-1 { background: #fee2e2; color: #991b1b; }
+    .rank-2 { background: #dbeafe; color: #1e40af; }
+    .rank-3 { background: #fef3c7; color: #92400e; }
+
+    .status-msg { padding: 24px; text-align: center; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <div class="header-title">Dashboard Rekapitulasi Penilaian Festival Inovasi</div>
+        <div class="header-sub" id="lastUpdate">Pembaruan terakhir : memuat...</div>
+      </div>
+      <div class="header-actions">
+        <div class="badge-connected" id="connStatus">Memuat...</div>
+        <button class="btn-refresh" onclick="loadData()">↻ Refresh Sekarang</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="tabs">
+        <button class="tab-btn active" data-mode="IDE" onclick="setMode('IDE', this)">IDE</button>
+        <button class="tab-btn" data-mode="AKTIF" onclick="setMode('AKTIF', this)">AKTIF</button>
+        <button class="tab-btn" data-mode="SEMUA" onclick="setMode('SEMUA', this)">SEMUA</button>
+      </div>
+      <div class="stats">
+        <div class="stat-box">TOTAL INOVASI <span id="totalInovasi">0</span></div>
+        <div class="stat-box">TOTAL SUARA MASUK <span id="totalSuara">0</span></div>
+      </div>
+    </div>
+
+    <div id="contentArea">
+      <div class="status-msg">Memuat data dari spreadsheet...</div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbwP_Ydp6FgVtCIrrYGKdnHAGM6vtay3xkQa5eTbuLWjYeG4hj6jmbzoXAJeLO4FWzZg/exec";
+    let currentMode = "IDE";
+
+    function setMode(mode, btnEl) {
+      currentMode = mode;
+      document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+      if (btnEl) btnEl.classList.add("active");
+      loadData();
+    }
+
+    async function loadData() {
+      const statusEl = document.getElementById("connStatus");
+      const areaEl = document.getElementById("contentArea");
+      statusEl.textContent = "Memuat...";
+
+      try {
+        if (!API_URL.startsWith("https://script.google.com/")) {
+          throw new Error("API_URL belum diisi dengan link Web App (/exec) dari Apps Script.");
+        }
+
+        const res = await fetch(`${API_URL}?mode=${currentMode}&t=${Date.now()}`);
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || "Gagal memuat data");
+
+        statusEl.textContent = "Terhubung";
+        document.getElementById("lastUpdate").textContent = `Pembaruan terakhir : ${data.updatedAt}`;
+        document.getElementById("totalInovasi").textContent = data.totalInovasi;
+        document.getElementById("totalSuara").textContent = data.totalSuaraMasuk;
+
+        renderGroups(data.groups);
+      } catch (err) {
+        statusEl.textContent = "Terputus";
+        areaEl.innerHTML = `<div class="status-msg" style="color:#b91c1c;"><strong>Gagal mengambil data:</strong> ${err.message}</div>`;
+      }
+    }
+
+    function renderGroups(groups) {
+      const areaEl = document.getElementById("contentArea");
+      if (!groups || !groups.length) {
+        areaEl.innerHTML = `<div class="status-msg">Tidak ada data untuk ditampilkan.</div>`;
+        return;
+      }
+
+      areaEl.innerHTML = groups.map((grp) => {
+        const rankRows = grp.items.map((item) => {
+          const rankClass = item.peringkat === 1 ? "rank-1" : item.peringkat === 2 ? "rank-2" : item.peringkat === 3 ? "rank-3" : "";
+          return `
+            <tr>
+              <td class="center"><span class="rank-badge ${rankClass}">${item.peringkat}</span></td>
+              <td><strong>${escapeHtml(item.namaInovasi)}</strong></td>
+              <td>${escapeHtml(item.instansi)}</td>
+            </tr>
+          `;
+        }).join("");
+
+        const scoreRows = grp.items.map((item) => {
+          const juriCells = item.juri.map((s) => `<td class="center">${escapeHtml(String(s))}</td>`).join("");
+          return `
+            <tr>
+              ${juriCells}
+              <td class="center"><strong>${item.total}</strong></td>
+            </tr>
+          `;
+        }).join("");
+
+        return `
+          <section class="category-section">
+            <div class="category-header">
+              <div class="category-title">Peringkat Inovasi — <span class="category-pill">${escapeHtml(grp.kategori)}</span></div>
+              <div style="font-size:12px;color:#6b7280;">${grp.items.length} Peserta</div>
+            </div>
+            <div class="grid-panels">
+              <div>
+                <div class="panel-label">Peringkat & Inovasi</div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th class="center" style="width:75px;">Peringkat</th>
+                        <th>Nama Inovasi</th>
+                        <th>OPD / Unit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${rankRows || `<tr><td colspan="3" class="center">Belum ada data</td></tr>`}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div>
+                <div class="panel-label">Tabel Nilai</div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th class="center">JURI 1</th>
+                        <th class="center">JURI 2</th>
+                        <th class="center">JURI 3</th>
+                        <th class="center">JURI 4</th>
+                        <th class="center">JURI 5</th>
+                        <th class="center">JURI 6</th>
+                        <th class="center">JURI 7</th>
+                        <th class="center">TOTAL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${scoreRows || `<tr><td colspan="8" class="center">Belum ada nilai</td></tr>`}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </section>
+        `;
+      }).join("");
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&")
+        .replace(/</g, "<")
+        .replace(/>/g, ">")
+        .replace(/"/g, """);
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
