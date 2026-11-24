@@ -27,7 +27,7 @@
     }
 
     .container {
-      max-width: 1380px;
+      max-width: 1440px;
       margin: 0 auto;
     }
 
@@ -176,7 +176,7 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     }
 
     .stat-label {
@@ -246,11 +246,11 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 980px;
+      min-width: 1120px;
     }
 
     thead th {
-      padding: 12px 14px;
+      padding: 12px 12px;
       font-size: 12px;
       font-weight: 700;
       text-align: left;
@@ -263,26 +263,30 @@
     }
 
     th.th-rank {
-      width: 90px;
+      width: 85px;
       text-align: center;
     }
 
     th.th-instansi {
-      width: 240px;
+      width: 220px;
     }
 
     th.th-score {
       background-color: var(--primary-red);
       color: #ffffff;
       text-align: center;
-      width: 68px;
+      min-width: 115px;
+      max-width: 155px;
+      white-space: normal;
+      line-height: 1.25;
+      border-right: 1px solid rgba(255, 255, 255, 0.14);
     }
 
     th.th-total {
       background-color: var(--dark-red);
       color: #ffffff;
       text-align: center;
-      width: 80px;
+      width: 85px;
     }
 
     tbody tr {
@@ -299,7 +303,7 @@
     }
 
     tbody td {
-      padding: 13px 14px;
+      padding: 13px 12px;
       font-size: 13.5px;
       vertical-align: middle;
     }
@@ -422,9 +426,10 @@
 
   <script>
     // GANTI URL DI BAWAH DENGAN URL WEB APP APPS SCRIPT ANDA (/exec)
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzGAYQ7jMEs2pvm1b6oZXXIIAXDCTYgXwrT6t96A9Ubfst0j6G1lyWOuhhI-NFAj6Yn/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbykT0pWKPwXWjKMOXNEjYA-67cVdlLjOjO-RcrSbChkyXqvA6W9PrAn-RTrsaH1riXm/exec';
 
-    let rawData = { ide: [], aktif: [] };
+    const DEFAULT_JURI_NAMES = ['JURI 1', 'JURI 2', 'JURI 3', 'JURI 4', 'JURI 5', 'JURI 6', 'JURI 7'];
+    let rawData = { ide: [], aktif: [], juriNames: DEFAULT_JURI_NAMES };
     let currentTab = 'IDE';
     const URUTAN_KATEGORI = ['SEKOLAH', 'OPD', 'UNIT'];
 
@@ -447,6 +452,10 @@
         if (res.success) {
           rawData.ide = res.ide || [];
           rawData.aktif = res.aktif || [];
+          rawData.juriNames = (Array.isArray(res.juriNames) && res.juriNames.length === 7)
+            ? res.juriNames
+            : DEFAULT_JURI_NAMES;
+
           document.getElementById('lastUpdated').textContent = 'Pembaruan terakhir : ' + res.lastUpdated;
           statusText.textContent = 'Terhubung';
           document.getElementById('statusDot').style.backgroundColor = '#4ade80';
@@ -491,6 +500,10 @@
         return;
       }
 
+      const headersHtml = rawData.juriNames
+        .map(nama => `<th class="th-score">${escapeHtml(nama)}</th>`)
+        .join('');
+
       let html = '';
 
       URUTAN_KATEGORI.forEach(kategori => {
@@ -517,13 +530,7 @@
                     <th class="th-left th-rank">Peringkat</th>
                     <th class="th-left">Nama Inovasi</th>
                     <th class="th-left th-instansi">OPD / Unit</th>
-                    <th class="th-score">JURI 1</th>
-                    <th class="th-score">JURI 2</th>
-                    <th class="th-score">JURI 3</th>
-                    <th class="th-score">JURI 4</th>
-                    <th class="th-score">JURI 5</th>
-                    <th class="th-score">JURI 6</th>
-                    <th class="th-score">JURI 7</th>
+                    ${headersHtml}
                     <th class="th-total">TOTAL</th>
                   </tr>
                 </thead>
