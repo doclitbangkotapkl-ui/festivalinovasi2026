@@ -84,6 +84,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .status-pill {
@@ -103,6 +104,25 @@
       height: 8px;
       background-color: #4ade80;
       border-radius: 50%;
+    }
+
+    .btn-input {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-input:hover {
+      background: rgba(255, 255, 255, 0.28);
     }
 
     .btn-refresh {
@@ -394,6 +414,9 @@
           <span class="status-dot" id="statusDot"></span>
           <span id="statusText">Terhubung</span>
         </div>
+        <a class="btn-input" href="https://doclitbangkotapkl-ui.github.io/inputnilaifestivalinovasi/" target="_blank" rel="noopener noreferrer">
+          ✎ Halaman Input
+        </a>
         <button class="btn-refresh" id="btnRefresh" onclick="loadData()">
           ↻ Refresh Sekarang
         </button>
